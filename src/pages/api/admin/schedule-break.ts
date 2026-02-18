@@ -3,9 +3,9 @@ import { z } from "zod";
 import { db } from "@/lib/auth";
 
 const ScheduleBreakSchema = z.object({
-	startDate: z.string().transform((str) => new Date(str)),
 	endDate: z.string().transform((str) => new Date(str)),
 	reason: z.string().optional(),
+	startDate: z.string().transform((str) => new Date(str)),
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -16,12 +16,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (!parseResult.success) {
 			return new Response(
 				JSON.stringify({
-					error: "Invalid request",
 					details: parseResult.error.flatten(),
+					error: "Invalid request",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -33,8 +33,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			return new Response(
 				JSON.stringify({ error: "Start date must be before end date" }),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -46,8 +46,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			where: {
 				OR: [
 					{
-						startDate: { lte: endDate },
 						endDate: { gte: startDate },
+						startDate: { lte: endDate },
 					},
 				],
 			},
@@ -57,14 +57,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			return new Response(
 				JSON.stringify({ error: "Break period overlaps with existing break" }),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
 
 		// Cancel any events within the break period
 		await db.event.updateMany({
+			data: {
+				status: "canceled",
+			},
 			where: {
 				eventDate: {
 					gte: startDate,
@@ -72,29 +75,26 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				},
 				status: "scheduled",
 			},
-			data: {
-				status: "canceled",
-			},
 		});
 
 		// Create the break
 		const breakPeriod = await db.break.create({
 			data: {
-				startDate,
 				endDate,
 				reason,
+				startDate,
 			},
 		});
 
-		return new Response(JSON.stringify({ success: true, break: breakPeriod }), {
-			status: 200,
+		return new Response(JSON.stringify({ break: breakPeriod, success: true }), {
 			headers: { "Content-Type": "application/json" },
+			status: 200,
 		});
 	} catch (error) {
 		console.error("Error scheduling break:", error);
 		return new Response(JSON.stringify({ error: "Failed to schedule break" }), {
-			status: 500,
 			headers: { "Content-Type": "application/json" },
+			status: 500,
 		});
 	}
 };

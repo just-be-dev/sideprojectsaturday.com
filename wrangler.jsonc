@@ -4,7 +4,7 @@
 	"compatibility_date": "2025-07-09",
 	"compatibility_flags": [
 		"nodejs_compat_v2",
-		"nodejs_compat_populate_process_env"
+		"nodejs_compat_populate_process_env",
 	],
 	"assets": { "directory": "dist", "binding": "ASSETS" },
 	"vars": { "BETTER_AUTH_BASE_URL": "https://sideprojectsaturday.com" },
@@ -12,8 +12,8 @@
 		{
 			"binding": "KV",
 			"id": "dac13025655e44cea9d83b3bc80895b2",
-			"preview_id": "dac13025655e44cea9d83b3bc80895b2"
-		}
+			"preview_id": "dac13025655e44cea9d83b3bc80895b2",
+		},
 	],
 	"d1_databases": [
 		{
@@ -21,11 +21,11 @@
 			"database_id": "63c43e9b-4981-4224-8a94-df53c4e78dfe",
 			"database_name": "sps-db",
 			"migrations_dir": "prisma/migrations",
-			"preview_database_id": "63c43e9b-4981-4224-8a94-df53c4e78dfe"
-		}
+			"preview_database_id": "63c43e9b-4981-4224-8a94-df53c4e78dfe",
+		},
 	],
 	"queues": {
 		"consumers": [],
-		"producers": [{ "queue": "sps-user-event", "binding": "USER_EVENT_QUEUE" }]
-	}
+		"producers": [{ "queue": "sps-user-event", "binding": "USER_EVENT_QUEUE" }],
+	},
 }

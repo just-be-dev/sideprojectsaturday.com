@@ -14,8 +14,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 		if (typeof content !== "string" || typeof enabledBool !== "boolean") {
 			return new Response(JSON.stringify({ error: "Invalid request data" }), {
-				status: 400,
 				headers: { "Content-Type": "application/json" },
+				status: 400,
 			});
 		}
 
@@ -32,12 +32,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (existingConfig) {
 			// Update existing config
 			await db.bannerConfig.update({
-				where: { id: existingConfig.id },
 				data: {
 					content,
 					enabled: enabledBool,
 					updatedAt: new Date(),
 				},
+				where: { id: existingConfig.id },
 			});
 		} else {
 			// Create new config
@@ -50,14 +50,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		}
 
 		return new Response(JSON.stringify({ success: true }), {
-			status: 200,
 			headers: { "Content-Type": "application/json" },
+			status: 200,
 		});
 	} catch (error) {
 		console.error("Failed to update banner:", error);
 		return new Response(JSON.stringify({ error: "Failed to update banner" }), {
-			status: 500,
 			headers: { "Content-Type": "application/json" },
+			status: 500,
 		});
 	}
 };

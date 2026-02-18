@@ -143,6 +143,7 @@ but pick <commit-sha>                # Auto-select target if only one branch
 ```
 
 The source can be:
+
 - A commit SHA (full or short)
 - A CLI ID from `but status`
 - An unapplied branch name (shows interactive commit picker)
@@ -196,6 +197,7 @@ but commit empty --after <target>        # Insert empty commit after target
 **Important:** Without `--only`, ALL uncommitted changes are committed to the branch, not just staged files. Use `--only` when you've staged specific files and want to commit only those.
 
 **Committing specific files or hunks:** Use `--changes` (or `-p`) with comma-separated CLI IDs to commit only those files or hunks:
+
 - **File IDs** from `but status --json`: commits entire files
 - **Hunk IDs** from `but diff --json`: commits individual hunks
 - `--changes` takes one argument per flag. Use `--changes a1,b2` or `--changes a1 --changes b2`, not `--changes a1 b2`.
@@ -296,6 +298,7 @@ but amend <file-id> <commit-id> --status-after   # Amend then show workspace sta
 ```
 
 **When to use `amend` vs `absorb`:**
+
 - `but amend` - You know the target commit; explicit control
 - `but absorb` - Let GitButler auto-detect the target; smart matching based on dependencies
 

@@ -34,6 +34,11 @@ export function lazyInvokable<TDeps extends unknown[], T extends object>(
 	return new Proxy<T & ((...deps: TDeps) => void)>(
 		(() => {}) as T & ((...deps: TDeps) => void),
 		{
+			apply: (_, __, args: TDeps) => {
+				if (initialized) {return;}
+				instance = fn(...args);
+				initialized = true;
+			},
 			get: (_, prop) => {
 				if (!initialized) {
 					throw new Error(
@@ -41,11 +46,6 @@ export function lazyInvokable<TDeps extends unknown[], T extends object>(
 					);
 				}
 				return instance?.[prop as keyof T];
-			},
-			apply: (_, __, args: TDeps) => {
-				if (initialized) return;
-				instance = fn(...args);
-				initialized = true;
 			},
 		},
 	);

@@ -27,8 +27,6 @@ export const eventWorkflow = new Workflow("event-management", {
 });
 
 export const userEventWorker = await Worker("user-event-worker", {
-	entrypoint: "./src/services/user-event-consumer.ts",
-	compatibilityFlags: ["nodejs_compat_v2"],
 	bindings: {
 		DB: db,
 		KV: kv,
@@ -37,6 +35,8 @@ export const userEventWorker = await Worker("user-event-worker", {
 			process.env.RESEND_AUDIENCE_ID as string,
 		),
 	},
+	compatibilityFlags: ["nodejs_compat_v2"],
+	entrypoint: "./src/services/user-event-consumer.ts",
 	eventSources: [
 		{
 			queue: userEventQueue,
@@ -50,61 +50,61 @@ export const userEventWorker = await Worker("user-event-worker", {
 });
 
 export const eventWorker = await Worker("event-worker", {
-	entrypoint: "./src/services/event-management.tsx",
-	compatibilityFlags: ["nodejs_compat_v2"],
 	bindings: {
+		BETTER_AUTH_BASE_URL: process.env.PROD_URL as string,
+		DB: db,
+		EVENT_WORKFLOW: eventWorkflow,
+		KV: kv,
+		RESEND_API_KEY: alchemy.secret(process.env.RESEND_API_KEY as string),
+		RESEND_AUDIENCE_ID: alchemy.secret(
+			process.env.RESEND_AUDIENCE_ID as string,
+		),
+	},
+	compatibilityFlags: ["nodejs_compat_v2"],
+	crons: ["0 14 * * 1"],
+	entrypoint: "./src/services/event-management.tsx", // 2 PM UTC = 9 AM EST / 10 AM EDT on Mondays
+});
+
+export const worker = await Astro("sideprojectsaturday", {
+	bindings: {
+		ADMIN_EMAIL: alchemy.secret(process.env.ADMIN_EMAIL as string),
+		BETTER_AUTH_BASE_URL: process.env.PROD_URL as string,
 		DB: db,
 		KV: kv,
 		RESEND_API_KEY: alchemy.secret(process.env.RESEND_API_KEY as string),
 		RESEND_AUDIENCE_ID: alchemy.secret(
 			process.env.RESEND_AUDIENCE_ID as string,
 		),
-		BETTER_AUTH_BASE_URL: process.env.PROD_URL as string,
-		EVENT_WORKFLOW: eventWorkflow,
+		SWITCHBOT_DEVICE_ID: alchemy.secret(
+			process.env.SWITCHBOT_DEVICE_ID as string,
+		),
+		SWITCHBOT_KEY: alchemy.secret(process.env.SWITCHBOT_KEY as string),
+		SWITCHBOT_TOKEN: alchemy.secret(process.env.SWITCHBOT_TOKEN as string),
+		USER_EVENT_QUEUE: userEventQueue,
 	},
-	crons: ["0 14 * * 1"], // 2 PM UTC = 9 AM EST / 10 AM EDT on Mondays
-});
-
-export const worker = await Astro("sideprojectsaturday", {
 	command: "astro build",
 	compatibilityFlags: [
 		"nodejs_compat_v2",
 		"nodejs_compat_populate_process_env",
 	],
-	bindings: {
-		RESEND_API_KEY: alchemy.secret(process.env.RESEND_API_KEY as string),
-		RESEND_AUDIENCE_ID: alchemy.secret(
-			process.env.RESEND_AUDIENCE_ID as string,
-		),
-		ADMIN_EMAIL: alchemy.secret(process.env.ADMIN_EMAIL as string),
-		BETTER_AUTH_BASE_URL: process.env.PROD_URL as string,
-		SWITCHBOT_TOKEN: alchemy.secret(process.env.SWITCHBOT_TOKEN as string),
-		SWITCHBOT_KEY: alchemy.secret(process.env.SWITCHBOT_KEY as string),
-		SWITCHBOT_DEVICE_ID: alchemy.secret(
-			process.env.SWITCHBOT_DEVICE_ID as string,
-		),
-		DB: db,
-		KV: kv,
-		USER_EVENT_QUEUE: userEventQueue,
-	},
 });
 
 await WranglerJson("wrangler.jsonc", {
-	worker,
 	transform: {
 		wrangler(config) {
 			config.queues = {
 				consumers: [],
 				producers: [
 					{
-						queue: userEventQueue.name,
 						binding: "USER_EVENT_QUEUE",
+						queue: userEventQueue.name,
 					},
 				],
 			};
 			return config;
 		},
 	},
+	worker,
 });
 
 console.log({

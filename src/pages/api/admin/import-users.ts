@@ -62,12 +62,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (!parseResult.success) {
 			return new Response(
 				JSON.stringify({
-					error: "Invalid request",
 					details: parseResult.error.flatten(),
+					error: "Invalid request",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -84,8 +84,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 					error: error instanceof Error ? error.message : "Failed to parse CSV",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -94,8 +94,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			return new Response(
 				JSON.stringify({ error: "No valid users found in CSV" }),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -110,11 +110,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			const batchResults = await Promise.all(
 				batch.map((user) =>
 					db.user.upsert({
-						where: { email: user.email },
-						update: {
-							name: user.name, // Update name if provided
-							// Keep existing subscribed/rsvped/emailVerified values
-						},
 						create: {
 							email: user.email,
 							name: user.name,
@@ -122,6 +117,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 							subscribed: true,
 							rsvped: false,
 						},
+						update: {
+							name: user.name, // Update name if provided
+							// Keep existing subscribed/rsvped/emailVerified values
+						},
+						where: { email: user.email },
 					}),
 				),
 			);
@@ -136,10 +136,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			const batch = upsertResults.slice(i, i + QUEUE_BATCH_SIZE);
 			const queuePromises = batch.map((user) =>
 				queueUserEvent(locals.runtime.env, {
-					type: "user_create",
 					email: user.email,
 					name: user.name || undefined,
-					sendWelcomeEmail: false, // Don't send welcome emails for batch imports
+					sendWelcomeEmail: false,
+					type: "user_create", // Don't send welcome emails for batch imports
 				}),
 			);
 			await Promise.all(queuePromises);
@@ -147,20 +147,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 		return new Response(
 			JSON.stringify({
-				success: true,
 				processed: upsertResults.length,
+				success: true,
 				total: parsedUsers.length,
 			}),
 			{
-				status: 200,
 				headers: { "Content-Type": "application/json" },
+				status: 200,
 			},
 		);
 	} catch (error) {
 		console.error("Error importing users:", error);
 		return new Response(JSON.stringify({ error: "Failed to import users" }), {
-			status: 500,
 			headers: { "Content-Type": "application/json" },
+			status: 500,
 		});
 	}
 };

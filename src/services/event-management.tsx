@@ -135,16 +135,15 @@ export class EventManagementWorkflow extends WorkflowEntrypoint<WorkflowEnv> {
 		const resend = new Resend(this.env.RESEND_API_KEY);
 
 		const eventDateStr = eventDate.toLocaleDateString("en-US", {
+			day: "numeric",
+			month: "long",
 			weekday: "long",
 			year: "numeric",
-			month: "long",
-			day: "numeric",
 		});
 
 		await resend.broadcasts.create({
 			audienceId: this.env.RESEND_AUDIENCE_ID,
 			from: "Side Project Saturday <events@sideprojectsaturday.com>",
-			subject: `🎉 Side Project Saturday - ${eventDateStr}`,
 			react: (
 				<EventInviteEmail
 					eventDate={eventDateStr}
@@ -152,6 +151,7 @@ export class EventManagementWorkflow extends WorkflowEntrypoint<WorkflowEnv> {
 					rsvpLink={`${this.env.BETTER_AUTH_BASE_URL}/rsvp`}
 				/>
 			),
+			subject: `🎉 Side Project Saturday - ${eventDateStr}`,
 		});
 	}
 
@@ -163,11 +163,9 @@ export class EventManagementWorkflow extends WorkflowEntrypoint<WorkflowEnv> {
 			"SELECT email, name, id FROM user WHERE rsvped = true",
 		).all();
 
-		// biome-ignore lint/suspicious/noExplicitAny: TODO setup prisma DB types
+		// oxlint-disable-next-line typescript/no-explicit-any -- TODO setup prisma DB types
 		const emails = rsvpdUsers.results.map((user: any) => ({
-			to: user.email,
 			from: "Side Project Saturday <events@sideprojectsaturday.com>",
-			subject: "🚀 Side Project Saturday is TODAY!",
 			react: (
 				<EventTodayEmail
 					recipientName={user.name}
@@ -178,6 +176,8 @@ export class EventManagementWorkflow extends WorkflowEntrypoint<WorkflowEnv> {
 					userId={user.id}
 				/>
 			),
+			subject: "🚀 Side Project Saturday is TODAY!",
+			to: user.email,
 		}));
 
 		// Send batch emails

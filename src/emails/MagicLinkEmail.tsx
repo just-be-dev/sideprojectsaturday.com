@@ -70,29 +70,29 @@ export default function MagicLinkEmail({ magicLink }: MagicLinkEmailProps) {
 
 const main = {
 	backgroundColor: "#fff8e7",
-	fontFamily: "system-ui, -apple-system, sans-serif",
 	backgroundImage:
 		"linear-gradient(135deg, #fff8e7 0%, #ffeaa7 20%, #ffb347 35%, #87ceeb 60%, #4fc3f7 80%, #0288d1 100%)",
+	fontFamily: "system-ui, -apple-system, sans-serif",
 	minHeight: "100vh",
 };
 
 const container = {
+	backdropFilter: "blur(10px)",
 	backgroundColor: "rgba(255,255,255,0.95)",
-	margin: "0 auto",
-	padding: "0",
-	marginBottom: "0",
+	border: "1px solid rgba(255,255,255,0.3)",
 	borderRadius: "12px",
 	boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
-	backdropFilter: "blur(10px)",
-	border: "1px solid rgba(255,255,255,0.3)",
+	margin: "0 auto",
+	marginBottom: "0",
 	maxWidth: "600px",
+	padding: "0",
 };
 
 const header = {
 	background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
+	borderRadius: "12px 12px 0 0",
 	padding: "32px 48px",
 	textAlign: "center" as const,
-	borderRadius: "12px 12px 0 0",
 };
 
 const h1 = {
@@ -141,13 +141,13 @@ const buttonContainer = {
 const button = {
 	background: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
 	borderRadius: "12px",
+	boxShadow: "0 6px 20px rgba(251, 191, 36, 0.4)",
 	color: "#ffffff",
+	display: "inline-block",
 	fontSize: "18px",
 	fontWeight: "700",
-	textDecoration: "none",
 	padding: "16px 32px",
-	display: "inline-block",
-	boxShadow: "0 6px 20px rgba(251, 191, 36, 0.4)",
+	textDecoration: "none",
 	transition: "all 0.3s ease",
 };
 
@@ -155,8 +155,8 @@ const eventDetails = {
 	backgroundColor: "#fef3c7",
 	border: "2px solid #fbbf24",
 	borderRadius: "12px",
-	padding: "20px",
 	margin: "0 0 24px 0",
+	padding: "20px",
 };
 
 const detailsHeader = {
@@ -179,11 +179,11 @@ const expiry = {
 	backgroundColor: "#fee2e2",
 	border: "1px solid #fca5a5",
 	borderRadius: "8px",
-	padding: "12px",
 	color: "#991b1b",
 	fontSize: "14px",
-	textAlign: "center" as const,
 	margin: "0",
+	padding: "12px",
+	textAlign: "center" as const,
 };
 
 const hr = {
@@ -195,11 +195,11 @@ const hr = {
 const footer = {
 	color: "#6b7280",
 	fontSize: "14px",
+	fontWeight: "600",
 	lineHeight: "20px",
 	margin: "0 0 8px 0",
 	padding: "0 48px",
 	textAlign: "center" as const,
-	fontWeight: "600",
 };
 
 const hostedBy = {
