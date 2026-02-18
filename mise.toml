@@ -1,13 +1,12 @@
 [tools]
 lefthook = "1.11.9"
-node = "22.16.0"
-pnpm = "10.12.1"
+bun = "latest"
 
 [settings]
 experimental = true
 
 [hooks]
-postinstall = ["pnpm install", "lefthook install"]
+postinstall = ["bun install", "lefthook install"]
 
 [env]
 _.path = "node_modules/.bin"
@@ -64,7 +63,7 @@ run = "wrangler tail sideprojectsaturday"
 
 [tasks."gen:better-auth"]
 description = "Generate better-auth types"
-run = "npx @better-auth/cli@latest generate --config src/lib/auth.ts"
+run = "bunx @better-auth/cli@latest generate --config src/lib/auth.ts"
 
 [tasks."migrate:create"]
 description = "Create new migration"

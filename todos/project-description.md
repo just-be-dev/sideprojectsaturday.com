@@ -22,7 +22,7 @@ A web application for managing weekly Saturday morning meetups (9am-12pm) for bu
 - **Email**: Resend API with React Email templates
 - **Cloud**: Cloudflare Workers, D1, KV, Queues, Workflows
 - **Deployment**: Alchemy deployment system
-- **Tools**: mise (task runner), pnpm, TypeScript, Biome (linting/formatting)
+- **Tools**: mise (task runner), bun, TypeScript, Biome (linting/formatting)
 - **IoT**: SwitchBot API for door control
 
 ## Structure

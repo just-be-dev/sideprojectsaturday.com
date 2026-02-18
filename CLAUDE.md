@@ -166,7 +166,7 @@ The app deploys to Cloudflare using Alchemy deployment system configured in `alc
 
 ## Package Management Notes
 
-- **Package Installation**: Use pnpm to install dependencies
+- **Package Installation**: Use bun to install dependencies
 
 ## Feature-Specific Implementation Details
 

@@ -12,7 +12,7 @@ const UpdateUserFieldSchema = z.object({
 export const POST: APIRoute = async ({ request, locals }) => {
 	try {
 		const contentType = request.headers.get("content-type");
-		let body: any;
+		let body: unknown;
 
 		if (contentType?.includes("application/json")) {
 			body = await request.json();
