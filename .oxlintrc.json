@@ -1,0 +1,26 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn",
+		"style": "warn"
+	},
+	"rules": {
+		"prefer-const": "error",
+		"no-unused-vars": "error",
+		"typescript/consistent-type-imports": "error",
+		"typescript/no-explicit-any": "warn",
+		"typescript/no-non-null-assertion": "warn"
+	},
+	"ignorePatterns": ["dist/**", ".astro/**", "node_modules/**", "**/*.astro"],
+	"overrides": [
+		{
+			"files": ["**/*.test.ts", "**/*.spec.ts"],
+			"rules": {
+				"typescript/no-non-null-assertion": "off",
+				"typescript/no-explicit-any": "off"
+			}
+		}
+	]
+}

@@ -42,12 +42,12 @@ description = "Destroy Cloudflare resources"
 run = "tsx alchemy.run.ts --destroy"
 
 [tasks.fmt]
-description = "Format code with Prettier and Biome"
-run = ["prettier --write 'src/**/*.astro'", "biome check --write --unsafe ."]
+description = "Format code with Prettier and oxfmt"
+run = ["prettier --write 'src/**/*.astro'", "oxfmt .", "oxlint --fix ."]
 
 [tasks.check]
-description = "Check code formatting without making changes"
-run = ["prettier --check 'src/**/*.astro'", "biome check"]
+description = "Check code formatting and linting without making changes"
+run = ["prettier --check 'src/**/*.astro'", "oxfmt --check .", "oxlint ."]
 
 [tasks.emails]
 description = "Preview email templates with react-email"
