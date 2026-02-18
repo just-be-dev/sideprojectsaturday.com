@@ -20,13 +20,13 @@ function parseCSV(csvData: string): ParsedUser[] {
 	const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
 
 	// Find email column (required)
-	const emailIndex = headers.findIndex((h) => h === "email");
+	const emailIndex = headers.indexOf("email");
 	if (emailIndex === -1) {
 		throw new Error('CSV must have an "email" column');
 	}
 
 	// Find name column (optional)
-	const nameIndex = headers.findIndex((h) => h === "name");
+	const nameIndex = headers.indexOf("name");
 
 	const users: ParsedUser[] = [];
 
