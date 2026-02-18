@@ -13,8 +13,23 @@ _.path = "node_modules/.bin"
 _.file = ".env"
 
 [tasks.dev]
-description = "Start development server at localhost:4433"
+description = "Start all dev servers"
+depends = ["dev:astro", "dev:event-worker", "dev:user-event-worker"]
+
+[tasks."dev:astro"]
+description = "Start Astro dev server at localhost:4433"
+depends = ["migrate:dev"]
 run = "astro dev"
+
+[tasks."dev:event-worker"]
+description = "Start event worker in dev mode"
+depends = ["migrate:dev"]
+run = "wrangler dev --config wrangler.event-worker.jsonc --port 8788 --inspector-port 9230"
+
+[tasks."dev:user-event-worker"]
+description = "Start user event queue worker in dev mode"
+depends = ["migrate:dev"]
+run = "wrangler dev --config wrangler.user-event-worker.jsonc --port 8789 --inspector-port 9231"
 
 [tasks.build]
 description = "Build for production"
@@ -34,12 +49,14 @@ description = "Run Astro CLI commands"
 run = "astro"
 
 [tasks.deploy]
-description = "Deploy to Cloudflare via Alchemy"
-run = "tsx alchemy.run.ts"
-
-[tasks.destroy]
-description = "Destroy Cloudflare resources"
-run = "tsx alchemy.run.ts --destroy"
+description = "Deploy all workers to Cloudflare"
+run = [
+  "wrangler d1 migrations apply DB --remote",
+  "mise build",
+  "wrangler deploy",
+  "wrangler deploy --config wrangler.event-worker.jsonc",
+  "wrangler deploy --config wrangler.user-event-worker.jsonc",
+]
 
 [tasks.fmt]
 description = "Format code with Prettier and Biome"

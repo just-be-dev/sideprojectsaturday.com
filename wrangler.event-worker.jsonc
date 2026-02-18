@@ -1,0 +1,32 @@
+{
+	"name": "event-worker",
+	"main": "src/services/event-management.tsx",
+	"compatibility_date": "2025-07-09",
+	"compatibility_flags": ["nodejs_compat_v2"],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_id": "63c43e9b-4981-4224-8a94-df53c4e78dfe",
+			"database_name": "sps-db"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "KV",
+			"id": "dac13025655e44cea9d83b3bc80895b2"
+		}
+	],
+	"workflows": [
+		{
+			"binding": "EVENT_WORKFLOW",
+			"name": "event-management",
+			"class_name": "EventManagementWorkflow"
+		}
+	],
+	"vars": {
+		"BETTER_AUTH_BASE_URL": "https://sideprojectsaturday.com"
+	},
+	"triggers": {
+		"crons": ["0 14 * * 1"]
+	}
+}
