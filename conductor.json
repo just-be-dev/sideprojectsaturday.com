@@ -1,7 +1,7 @@
 {
-    "scripts": {
-        "setup": "mise trust && mise install",
-        "run": "mise run dev",
-        "runScriptMode": "nonconcurrent"
-    }
+	"scripts": {
+		"setup": "mise trust && mise install",
+		"run": "mise run dev",
+		"runScriptMode": "nonconcurrent"
+	}
 }
