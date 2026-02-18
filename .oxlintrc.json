@@ -11,7 +11,19 @@
 		"no-unused-vars": "error",
 		"typescript/consistent-type-imports": "error",
 		"typescript/no-explicit-any": "warn",
-		"typescript/no-non-null-assertion": "warn"
+		"typescript/no-non-null-assertion": "warn",
+		"func-style": "off",
+		"id-length": "off",
+		"init-declarations": "off",
+		"max-statements": "off",
+		"new-cap": "off",
+		"no-continue": "off",
+		"no-magic-numbers": "off",
+		"no-shadow": "off",
+		"no-ternary": "off",
+		"no-empty-interface": "off",
+		"sort-imports": "off",
+		"sort-keys": "off"
 	},
 	"ignorePatterns": ["dist/**", ".astro/**", "node_modules/**", "**/*.astro"],
 	"overrides": [
@@ -20,6 +32,12 @@
 			"rules": {
 				"typescript/no-non-null-assertion": "off",
 				"typescript/no-explicit-any": "off"
+			}
+		},
+		{
+			"files": ["**/*.d.ts"],
+			"rules": {
+				"typescript/consistent-type-imports": "off"
 			}
 		}
 	]

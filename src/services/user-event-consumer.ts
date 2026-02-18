@@ -38,8 +38,8 @@ export default {
 
 						// Add user to Resend audience
 						await resend.contacts.create({
-							email,
 							audienceId: env.RESEND_AUDIENCE_ID,
+							email,
 							unsubscribed: false,
 						});
 
@@ -47,12 +47,12 @@ export default {
 						if (sendWelcomeEmail) {
 							await resend.emails.send({
 								from: "noreply@sideprojectsaturday.com",
-								to: email,
-								subject: "Welcome to Side Project Saturday!",
 								react: WelcomeEmail({
-									username: name || email,
-									userId: "", // We don't have userId for user_create events
+									userId: "",
+									username: name || email, // We don't have userId for user_create events
 								}),
+								subject: "Welcome to Side Project Saturday!",
+								to: email,
 							});
 						}
 						break;
@@ -68,14 +68,14 @@ export default {
 								try {
 									// Fetch existing contact details
 									const existingContact = await resend.contacts.get({
-										email,
 										audienceId: env.RESEND_AUDIENCE_ID,
+										email,
 									});
 
 									// Create new contact with merged details
 									await resend.contacts.create({
-										email: newEmail,
 										audienceId: env.RESEND_AUDIENCE_ID,
+										email: newEmail,
 										unsubscribed:
 											subscribed !== undefined
 												? !subscribed
@@ -84,8 +84,8 @@ export default {
 
 									// Delete old contact
 									await resend.contacts.remove({
-										email,
 										audienceId: env.RESEND_AUDIENCE_ID,
+										email,
 									});
 
 									console.log(
@@ -101,8 +101,8 @@ export default {
 							} else if (subscribed !== undefined) {
 								// Only update if there's something to update
 								const updateData = {
-									email,
 									audienceId: env.RESEND_AUDIENCE_ID,
+									email,
 									unsubscribed: !subscribed,
 								};
 

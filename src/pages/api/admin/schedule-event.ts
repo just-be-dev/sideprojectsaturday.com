@@ -23,12 +23,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (!parseResult.success) {
 			return new Response(
 				JSON.stringify({
-					error: "Invalid request",
 					details: parseResult.error.flatten(),
+					error: "Invalid request",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -46,8 +46,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			return new Response(
 				JSON.stringify({ error: "Event already scheduled for this date" }),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -55,8 +55,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		// Check if date falls within a break period
 		const breaks = await db.break.findMany({
 			where: {
-				startDate: { lte: eventDate },
 				endDate: { gte: eventDate },
+				startDate: { lte: eventDate },
 			},
 		});
 
@@ -66,8 +66,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 					error: "Cannot schedule event during a break period",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -80,15 +80,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			},
 		});
 
-		return new Response(JSON.stringify({ success: true, event }), {
-			status: 200,
+		return new Response(JSON.stringify({ event, success: true }), {
 			headers: { "Content-Type": "application/json" },
+			status: 200,
 		});
 	} catch (error) {
 		console.error("Error scheduling event:", error);
 		return new Response(JSON.stringify({ error: "Failed to schedule event" }), {
-			status: 500,
 			headers: { "Content-Type": "application/json" },
+			status: 500,
 		});
 	}
 };

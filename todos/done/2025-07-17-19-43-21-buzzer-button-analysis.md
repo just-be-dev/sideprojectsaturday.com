@@ -5,15 +5,17 @@ Based on my research, here's a comprehensive analysis of the current buzzer impl
 ### 1. **Current Buzzer System Architecture**
 
 #### **Buzzer Page (/buzz):**
+
 - **Automatic trigger**: When users visit `/buzz`, it automatically calls the buzz API
 - **Visual states**: Loading, Success, Locked, and Error states with animations
 - **Time-based check**: Uses `isWithinEventHours()` from date-utils to check if it's Saturday 9am-12pm EST
 - **Countdown feature**: After successful buzz, shows a 10-second countdown before allowing another buzz
 
 #### **Buzzer API (/api/buzz):**
+
 - **Method**: POST endpoint
 - **Authentication**: No user authentication required (public endpoint)
-- **Validation**: 
+- **Validation**:
   - Checks if current time is within event hours (Saturday 9am-12pm EST)
   - Returns 403 if outside event hours
 - **Integration**: Uses SwitchBot API with HMAC authentication to physically unlock the door
@@ -24,6 +26,7 @@ Based on my research, here's a comprehensive analysis of the current buzzer impl
 ### 2. **Homepage Structure**
 
 #### **Current Layout:**
+
 - Gradient background with decorative elements
 - Main title "Side Project Saturday" with time and location
 - Central card containing:
@@ -33,6 +36,7 @@ Based on my research, here's a comprehensive analysis of the current buzzer impl
     - **Non-authenticated**: See registration form or magic link sent confirmation
 
 #### **Authentication Flow:**
+
 - User state from `Astro.locals.user` (set by middleware)
 - User preferences (rsvped, subscribed) fetched from database
 - Checks for scheduled events for next Saturday
@@ -40,12 +44,14 @@ Based on my research, here's a comprehensive analysis of the current buzzer impl
 ### 3. **UI Component Patterns**
 
 #### **Button Styles:**
+
 - Primary action buttons use gradient backgrounds (amber/orange)
 - Shadow effects for depth
 - Hover animations (scale transform)
 - Consistent rounded corners and padding
 
 #### **Card/Section Patterns:**
+
 - Colored background boxes (green, blue, amber, purple) for different sections
 - Border styling with matching colors
 - Icon usage for visual clarity
@@ -61,6 +67,7 @@ Based on my research, here's a comprehensive analysis of the current buzzer impl
 ### 5. **Recommended Implementation Approach**
 
 #### **Homepage Modifications:**
+
 1. Add query to check for active events (status = 'inprogress')
 2. Add buzzer button in AuthenticatedUserSection when:
    - User is authenticated
@@ -68,17 +75,20 @@ Based on my research, here's a comprehensive analysis of the current buzzer impl
    - Current time is within event hours
 
 #### **Button Placement Options:**
+
 1. **Option A**: New section below RSVP section in AuthenticatedUserSection
 2. **Option B**: Floating action button in corner of the page
 3. **Option C**: Inline with event details section (recommended)
 
 #### **Technical Implementation:**
+
 1. Create a new component `BuzzerButton.astro` or add directly to AuthenticatedUserSection
 2. Use HTMX or client-side JavaScript for API calls
 3. Show inline loading/success/error states
 4. Match existing button styling patterns
 
 #### **Security Considerations:**
+
 - Keep the buzzer API public (as it currently is) since physical access is time-gated
 - Consider rate limiting to prevent abuse
 - Log buzz attempts for security auditing
@@ -117,6 +127,7 @@ Based on my analysis of the codebase, here are the key authentication and event 
 ### 3. **Conditional UI Rendering Patterns**
 
 - **Authentication-Based Rendering**:
+
   ```astro
   {user ? (
     <AuthenticatedUserSection user={userWithPreferences} hasEvent={hasEvent} />
@@ -133,6 +144,7 @@ Based on my analysis of the codebase, here are the key authentication and event 
 ### 4. **Component State Patterns**
 
 - **Props Pattern**: Components receive user and event state via props
+
   ```astro
   interface Props {
     user: { ... };
@@ -143,10 +155,10 @@ Based on my analysis of the codebase, here are the key authentication and event 
 - **Database Queries**: Pages fetch event data directly:
   ```typescript
   const event = await db.event.findFirst({
-    where: {
-      eventDate: { gte: start, lt: end },
-      status: "scheduled"
-    }
+  	where: {
+  		eventDate: { gte: start, lt: end },
+  		status: "scheduled",
+  	},
   });
   ```
 

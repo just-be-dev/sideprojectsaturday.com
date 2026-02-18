@@ -26,21 +26,19 @@ export const db = lazyInvokable((env: Env) => {
 });
 
 // Helper function to queue user events
-export const queueUserEvent = (env: Env, message: UserEventMessage) => {
-	return env.USER_EVENT_QUEUE.send(message);
-};
+export const queueUserEvent = (env: Env, message: UserEventMessage) => env.USER_EVENT_QUEUE.send(message);
 
 // KV adapter for better-auth secondary storage
 const createKVAdapter = (kv: KVNamespace) => ({
+	async delete(key: string): Promise<void> {
+		await kv.delete(key);
+	},
 	async get(key: string): Promise<string | null> {
 		return await kv.get(key);
 	},
 	async set(key: string, value: string, ttl?: number): Promise<void> {
 		const options = ttl ? { expirationTtl: ttl } : undefined;
 		await kv.put(key, value, options);
-	},
-	async delete(key: string): Promise<void> {
-		await kv.delete(key);
 	},
 });
 
@@ -52,7 +50,38 @@ export const createAuth = (env?: Env) =>
 		database: prismaAdapter(db, {
 			provider: "sqlite",
 		}),
-		secondaryStorage: env?.KV ? createKVAdapter(env.KV) : undefined,
+		emailVerification: {
+			autoSignInAfterVerification: true,
+			expiresIn: 60 * 60 * 5,
+			async onEmailVerification(user, _request) {
+				// Queue the contact creation and welcome email instead of doing it directly
+				if (env) {
+					try {
+						await queueUserEvent(env, {
+							email: user.email,
+							name: user.name || undefined,
+							sendWelcomeEmail: true,
+							type: "user_create",
+						});
+					} catch (error) {
+						// Log error but don't fail the verification process
+						console.error("Failed to queue user event:", error);
+					}
+				}
+			},
+			sendOnSignUp: true,
+			async sendVerificationEmail({ user, url }) {
+				await resend.emails.send({
+					from: "noreply@sideprojectsaturday.com",
+					react: VerificationEmail({
+						username: user.name,
+						verificationUrl: url,
+					}),
+					subject: "Verify your email address",
+					to: user.email,
+				});
+			}, // 5 hours
+		},
 		plugins: [
 			admin(),
 			magicLink({
@@ -62,45 +91,14 @@ export const createAuth = (env?: Env) =>
 					}
 					await resend.emails.send({
 						from: "noreply@sideprojectsaturday.com",
-						to: email,
-						subject: "Sign in to Side Project Saturday",
 						react: MagicLinkEmail({ magicLink: url }),
+						subject: "Sign in to Side Project Saturday",
+						to: email,
 					});
 				},
 			}),
 		],
-		emailVerification: {
-			async sendVerificationEmail({ user, url }) {
-				await resend.emails.send({
-					from: "noreply@sideprojectsaturday.com",
-					to: user.email,
-					subject: "Verify your email address",
-					react: VerificationEmail({
-						verificationUrl: url,
-						username: user.name,
-					}),
-				});
-			},
-			sendOnSignUp: true,
-			async onEmailVerification(user, _request) {
-				// Queue the contact creation and welcome email instead of doing it directly
-				if (env) {
-					try {
-						await queueUserEvent(env, {
-							type: "user_create",
-							email: user.email,
-							name: user.name || undefined,
-							sendWelcomeEmail: true,
-						});
-					} catch (error) {
-						// Log error but don't fail the verification process
-						console.error("Failed to queue user event:", error);
-					}
-				}
-			},
-			autoSignInAfterVerification: true,
-			expiresIn: 60 * 60 * 5, // 5 hours
-		},
+		secondaryStorage: env?.KV ? createKVAdapter(env.KV) : undefined,
 	});
 
 // Default auth instance for compatibility

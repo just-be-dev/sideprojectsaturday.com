@@ -34,10 +34,10 @@ export function getCurrentWeekSaturdayDate(): Date {
 export function getNextSaturdayFormatted(): string {
 	const nextSaturday = getNextSaturdayDate();
 	return nextSaturday.toLocaleDateString("en-US", {
+		day: "numeric",
+		month: "long",
 		weekday: "long",
 		year: "numeric",
-		month: "long",
-		day: "numeric",
 	});
 }
 
@@ -46,10 +46,10 @@ export function getNextSaturdayFormatted(): string {
  */
 export function formatEventDate(date: Date): string {
 	return date.toLocaleDateString("en-US", {
+		day: "numeric",
+		month: "long",
 		weekday: "long",
 		year: "numeric",
-		month: "long",
-		day: "numeric",
 	});
 }
 
@@ -115,7 +115,7 @@ export function getDayRange(date: Date): { start: Date; end: Date } {
 	const end = new Date(start);
 	end.setDate(end.getDate() + 1);
 
-	return { start, end };
+	return { end, start };
 }
 
 /**

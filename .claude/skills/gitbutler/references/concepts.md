@@ -148,15 +148,15 @@ File-in-Commit       │ Uncommit        │ Move       │ Uncommit & assign �
 
 **Common examples:**
 
-| Source | Target | Operation | Example |
-|--------|--------|-----------|---------|
-| File | Branch | Stage file to branch | `but rub a1 bu` |
-| File | Commit | Amend file into commit | `but rub a1 c3` |
-| Commit | Commit | Squash commits | `but rub c2 c3` |
-| Commit | Branch | Move commit to branch | `but rub c2 bu` |
-| File | `zz` | Unstage file | `but rub a1 zz` |
-| Commit | `zz` | Undo commit | `but rub c2 zz` |
-| `zz` | Branch | Stage all unassigned | `but rub zz bu` |
+| Source | Target | Operation              | Example         |
+| ------ | ------ | ---------------------- | --------------- |
+| File   | Branch | Stage file to branch   | `but rub a1 bu` |
+| File   | Commit | Amend file into commit | `but rub a1 c3` |
+| Commit | Commit | Squash commits         | `but rub c2 c3` |
+| Commit | Branch | Move commit to branch  | `but rub c2 bu` |
+| File   | `zz`   | Unstage file           | `but rub a1 zz` |
+| Commit | `zz`   | Undo commit            | `but rub c2 zz` |
+| `zz`   | Branch | Stage all unassigned   | `but rub zz bu` |
 
 ### Higher-Level Conveniences
 

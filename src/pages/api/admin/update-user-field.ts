@@ -4,8 +4,8 @@ import { db } from "@/lib/auth";
 import resend from "@/lib/resend";
 
 const UpdateUserFieldSchema = z.object({
-	userId: z.string(),
 	field: z.enum(["rsvped", "subscribed"]),
+	userId: z.string(),
 	value: z.boolean(),
 });
 
@@ -20,8 +20,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			const formData = await request.formData();
 			body = Object.fromEntries(formData);
 			// Convert boolean strings to actual booleans
-			if (body.value === "true") body.value = true;
-			if (body.value === "false") body.value = false;
+			if (body.value === "true") {body.value = true;}
+			if (body.value === "false") {body.value = false;}
 		}
 
 		const parseResult = UpdateUserFieldSchema.safeParse(body);
@@ -29,12 +29,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (!parseResult.success) {
 			return new Response(
 				JSON.stringify({
-					error: "Invalid request",
 					details: parseResult.error.flatten(),
+					error: "Invalid request",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -48,29 +48,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		let userEmail = null;
 		if (field === "subscribed") {
 			const user = await db.user.findUnique({
-				where: { id: userId },
 				select: { email: true },
+				where: { id: userId },
 			});
 			if (!user) {
 				return new Response(JSON.stringify({ error: "User not found" }), {
-					status: 404,
 					headers: { "Content-Type": "application/json" },
+					status: 404,
 				});
 			}
 			userEmail = user.email;
 		}
 
 		await db.user.update({
-			where: { id: userId },
 			data: { [field]: value },
+			where: { id: userId },
 		});
 
 		// If updating subscription status, also update Resend contact
 		if (field === "subscribed" && userEmail) {
 			try {
 				await resend.contacts.update({
-					email: userEmail,
 					audienceId: locals.runtime.env.RESEND_AUDIENCE_ID,
+					email: userEmail,
 					unsubscribed: !value,
 				});
 			} catch (error) {
@@ -80,16 +80,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		}
 
 		return new Response(JSON.stringify({ success: true }), {
-			status: 200,
 			headers: { "Content-Type": "application/json" },
+			status: 200,
 		});
 	} catch (error) {
 		console.error("Error updating user field:", error);
 		return new Response(
 			JSON.stringify({ error: "Failed to update user field" }),
 			{
-				status: 500,
 				headers: { "Content-Type": "application/json" },
+				status: 500,
 			},
 		);
 	}
