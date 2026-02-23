@@ -3,8 +3,8 @@ import { z } from "zod";
 import { db } from "@/lib/auth";
 
 const UpdateRoleSchema = z.object({
-	userId: z.string(),
 	role: z.enum(["user", "admin"]),
+	userId: z.string(),
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -15,12 +15,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (!parseResult.success) {
 			return new Response(
 				JSON.stringify({
-					error: "Invalid request",
 					details: parseResult.error.flatten(),
+					error: "Invalid request",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -32,8 +32,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			return new Response(
 				JSON.stringify({ error: "Cannot remove your own admin role" }),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -41,19 +41,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		// Update user role
 		db(locals.runtime.env);
 		await db.user.update({
-			where: { id: userId },
 			data: { role },
+			where: { id: userId },
 		});
 
 		return new Response(JSON.stringify({ success: true }), {
-			status: 200,
 			headers: { "Content-Type": "application/json" },
+			status: 200,
 		});
 	} catch (error) {
 		console.error("Error updating role:", error);
 		return new Response(JSON.stringify({ error: "Failed to update role" }), {
-			status: 500,
 			headers: { "Content-Type": "application/json" },
+			status: 500,
 		});
 	}
 };

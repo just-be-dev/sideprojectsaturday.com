@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		const subscribed = formData.get("subscribed") === "true";
 
 		// Get the database instance with proper env
-		const runtime = locals.runtime;
+		const {runtime} = locals;
 		if (!runtime?.env) {
 			return new Response("Database environment not available", {
 				status: 500,
@@ -31,15 +31,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 		// Update user subscription preference in database
 		await db.user.update({
-			where: { id: session.user.id },
 			data: { subscribed },
+			where: { id: session.user.id },
 		});
 
 		// Update Resend contact subscription status
 		try {
 			await resend.contacts.update({
-				email: session.user.email,
 				audienceId: runtime.env.RESEND_AUDIENCE_ID,
+				email: session.user.email,
 				unsubscribed: !subscribed,
 			});
 		} catch (error) {

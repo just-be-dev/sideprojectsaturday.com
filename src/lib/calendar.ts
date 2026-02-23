@@ -7,9 +7,7 @@ export function generateCalendarEvent(eventDate: Date) {
 	const startTime = getEventStartTime(eventDate);
 	const endTime = getEventEndTime(eventDate);
 
-	const formatDateTime = (date: Date) => {
-		return `${date.toISOString().replace(/[-:]/g, "").split(".")[0]}Z`;
-	};
+	const formatDateTime = (date: Date) => `${date.toISOString().replace(/[-:]/g, "").split(".")[0]}Z`;
 
 	const title = "Side Project Saturday";
 	const description =
@@ -18,32 +16,32 @@ export function generateCalendarEvent(eventDate: Date) {
 
 	// Generate calendar data
 	const calendarData = {
-		title,
 		description,
+		endTime: formatDateTime(endTime),
 		location,
 		startTime: formatDateTime(startTime),
-		endTime: formatDateTime(endTime),
 		startTimeFormatted: startTime.toLocaleString("en-US", {
-			weekday: "long",
-			year: "numeric",
-			month: "long",
 			day: "numeric",
 			hour: "numeric",
 			minute: "2-digit",
-			timeZoneName: "short",
+			month: "long",
 			timeZone: "America/New_York",
+			timeZoneName: "short",
+			weekday: "long",
+			year: "numeric",
 		}),
+		title,
 	};
 
 	// Generate Google Calendar URL
 	const googleParams = new URLSearchParams({
 		action: "TEMPLATE",
-		text: title,
 		dates: `${calendarData.startTime}/${calendarData.endTime}`,
 		details: description,
 		location: location,
-		trp: "false",
 		sprop: "website:sideprojectsaturday.com",
+		text: title,
+		trp: "false",
 	});
 
 	const googleCalendarUrl = `https://calendar.google.com/calendar/render?${googleParams.toString()}`;

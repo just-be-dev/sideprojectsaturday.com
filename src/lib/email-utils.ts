@@ -29,40 +29,40 @@ export async function sendRsvpConfirmation({
 		.substring(0, 32);
 
 	const eventDateStr = eventDate.toLocaleDateString("en-US", {
+		day: "numeric",
+		month: "long",
 		weekday: "long",
 		year: "numeric",
-		month: "long",
-		day: "numeric",
 	});
 
 	try {
 		const result = await resend.emails.send({
-			from: "Side Project Saturday <events@sideprojectsaturday.com>",
-			to: userEmail,
-			subject: `✅ You're confirmed for Side Project Saturday - ${eventDateStr}`,
-			react: RsvpConfirmationEmail({
-				recipientName: userName,
-				eventDate: eventDateStr,
-				eventTime: "9:00 AM - 12:00 PM",
-				cancelLink: `${baseUrl}/rsvp/cancel`,
-				calendarLink: calendar.googleCalendarUrl,
-				userId: userId,
-			}),
 			attachments: [
 				{
-					filename: "side-project-saturday.ics",
 					content: Buffer.from(calendar.icsContent).toString("base64"),
 					contentType: "text/calendar",
+					filename: "side-project-saturday.ics",
 				},
 			],
+			from: "Side Project Saturday <events@sideprojectsaturday.com>",
 			headers: {
 				"X-Idempotency-Key": idempotencyKey,
 			},
+			react: RsvpConfirmationEmail({
+				calendarLink: calendar.googleCalendarUrl,
+				cancelLink: `${baseUrl}/rsvp/cancel`,
+				eventDate: eventDateStr,
+				eventTime: "9:00 AM - 12:00 PM",
+				recipientName: userName,
+				userId: userId,
+			}),
+			subject: `✅ You're confirmed for Side Project Saturday - ${eventDateStr}`,
+			to: userEmail,
 		});
 
-		return { success: true, emailId: result.data?.id };
+		return { emailId: result.data?.id, success: true };
 	} catch (error) {
 		console.error("Failed to send RSVP confirmation:", error);
-		return { success: false, error };
+		return { error, success: false };
 	}
 }

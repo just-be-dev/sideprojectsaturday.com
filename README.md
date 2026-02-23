@@ -54,31 +54,31 @@ ADMIN_EMAIL=admin@example.com               # for admin notifications
 
 ### Development Commands
 
-| Command | Description |
-|---------|-------------|
-| `mise dev` | Start development server at `localhost:4433` |
-| `mise build` | Build for production |
-| `mise preview` | Preview production build locally |
-| `mise fmt` | Format code with Biome |
-| `mise emails` | Preview email templates |
+| Command        | Description                                  |
+| -------------- | -------------------------------------------- |
+| `mise dev`     | Start development server at `localhost:4433` |
+| `mise build`   | Build for production                         |
+| `mise preview` | Preview production build locally             |
+| `mise fmt`     | Format code with Biome                       |
+| `mise emails`  | Preview email templates                      |
 
 ### Database Commands
 
-| Command | Description |
-|---------|-------------|
-| `mise migrate:create your_migration` | Create new database migration |
-| `mise migrate:dev` | Apply migrations to local database |
-| `mise migrate:prod` | Apply migrations to production database |
-| `mise gen:better-auth` | Generate better-auth types |
+| Command                              | Description                             |
+| ------------------------------------ | --------------------------------------- |
+| `mise migrate:create your_migration` | Create new database migration           |
+| `mise migrate:dev`                   | Apply migrations to local database      |
+| `mise migrate:prod`                  | Apply migrations to production database |
+| `mise gen:better-auth`               | Generate better-auth types              |
 
 ### Deployment Commands
 
-| Command | Description |
-|---------|-------------|
-| `mise deploy` | Deploy to Cloudflare |
-| `mise destroy` | Destroy Cloudflare resources |
-| `mise logs` | View production logs |
-| `mise open:deployment` | Open Cloudflare dashboard |
+| Command                | Description                  |
+| ---------------------- | ---------------------------- |
+| `mise deploy`          | Deploy to Cloudflare         |
+| `mise destroy`         | Destroy Cloudflare resources |
+| `mise logs`            | View production logs         |
+| `mise open:deployment` | Open Cloudflare dashboard    |
 
 ## Project Structure
 
@@ -131,14 +131,18 @@ ADMIN_EMAIL=admin@example.com               # for admin notifications
 ### Features Guide
 
 #### Authentication
+
 The app uses passwordless authentication via magic links:
+
 - Users enter their email at `/login`
 - Magic link is sent via Resend
 - Clicking the link signs them in
 - New users are automatically registered
 
 #### Event Management
+
 Events are automatically managed through Cloudflare Workflows:
+
 - **Monday**: New event created for upcoming Saturday
 - **Wednesday**: Event invitations sent to all subscribed users
 - **Saturday 7AM**: "Event today" reminders sent to RSVPd users
@@ -146,14 +150,18 @@ Events are automatically managed through Cloudflare Workflows:
 - **Saturday 12PM**: Event completed, door locked, RSVPs reset
 
 #### Door Access
+
 Authenticated users can remotely unlock the building door:
+
 - Navigate to `/buzz` during an active event
 - Click the buzz button to unlock the door
 - Door remains unlocked for 30 seconds
 - Only works when event status is "inprogress"
 
 #### Admin Features
+
 Admins have access to a full management dashboard at `/admin`:
+
 - View and manage all users
 - Schedule, reschedule, or cancel events
 - Schedule breaks (no events during specified periods)
@@ -164,6 +172,7 @@ Admins have access to a full management dashboard at `/admin`:
 ### Deployment
 
 Deployment is handled by Alchemy and targets Cloudflare:
+
 - `mise deploy` deploys the current code
 - Database migrations must be run separately: `mise migrate:prod`
 - Environment variables are managed in Cloudflare dashboard
@@ -182,6 +191,7 @@ Deployment is handled by Alchemy and targets Cloudflare:
 ### Database Schema
 
 The application uses these main database tables:
+
 - **user**: Core user data with subscription and RSVP status
 - **session**: Active user sessions for authentication
 - **account**: OAuth provider accounts (for future expansion)

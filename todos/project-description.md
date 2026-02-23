@@ -5,7 +5,7 @@ A web application for managing weekly Saturday morning meetups (9am-12pm) for bu
 ## Features
 
 - **Automated Event Management**: Weekly events automatically created, announced, and managed through Cloudflare Workflows
-- **Smart Door Access System**: SwitchBot integration for remote building door control during active events  
+- **Smart Door Access System**: SwitchBot integration for remote building door control during active events
 - **Magic Link Authentication**: Passwordless authentication with better-auth and secure session management
 - **RSVP System**: Event registration with confirmation emails and real-time attendee tracking
 - **Email Automation**: Event invitations, reminders, confirmations, and welcome emails via Resend
@@ -57,6 +57,7 @@ A web application for managing weekly Saturday morning meetups (9am-12pm) for bu
 ## Testing
 
 Currently no automated testing framework configured. Testing is manual through:
+
 - Development server preview
 - Email template preview via react-email
 - Production deployment testing

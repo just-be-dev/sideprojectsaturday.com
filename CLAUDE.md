@@ -13,7 +13,7 @@ Side Project Saturday - A web application for managing weekly side project meetu
 mise dev                    # Start development server at localhost:4433
 mise build                  # Build for production
 mise preview               # Preview production build locally
-mise fmt                   # Format code with Biome
+mise fmt                   # Format code with oxfmt + Prettier
 
 # Email Development
 mise emails                # Preview email templates with react-email
@@ -34,6 +34,7 @@ mise open:deployment       # Open Cloudflare dashboard
 ## Architecture Overview
 
 ### Technology Stack
+
 - **Framework**: Astro with SSR enabled for Cloudflare Workers
 - **Styling**: Tailwind CSS v4 (new Vite plugin) + DaisyUI
 - **Auth**: better-auth with magic link authentication (passwordless)
@@ -44,7 +45,7 @@ mise open:deployment       # Open Cloudflare dashboard
 - **Automation**: Cloudflare Workflows & Queues for event management
 - **IoT**: SwitchBot API for physical door control
 - **Deployment**: Alchemy deployment system
-- **Tooling**: mise for task management, Biome for formatting, TypeScript
+- **Tooling**: mise for task management, oxlint + oxfmt for linting/formatting (Prettier for .astro files), TypeScript
 
 ### Key Architectural Decisions
 
@@ -70,6 +71,7 @@ mise open:deployment       # Open Cloudflare dashboard
 ### Database Schema
 
 The app uses Prisma with these main tables:
+
 - `user`: Core user data with `subscribed` and `rsvped` boolean fields
 - `session`: Active user sessions
 - `account`: OAuth provider accounts (for future expansion)
@@ -92,7 +94,7 @@ Database migrations are managed by Prisma but require manual SQL application to 
    - `SWITCHBOT_TOKEN`, `SWITCHBOT_KEY`, `SWITCHBOT_DEVICE_ID`: Door control
    - `ADMIN_EMAIL`: Admin notifications
    - `DB`: D1 database binding
-2. **Code Style**: Biome enforces tabs, double quotes, and consistent formatting
+2. **Code Style**: oxfmt (tabs, double quotes) + oxlint enforce consistent formatting and linting for TS/TSX; Prettier handles .astro files
 3. **No Test Framework**: Currently no automated testing setup
 
 ### Important Patterns
@@ -115,12 +117,14 @@ Database migrations are managed by Prisma but require manual SQL application to 
 The app deploys to Cloudflare using Alchemy deployment system configured in `alchemy.run.ts`:
 
 ### Resources
+
 - **D1 Database**: `sps-db` with automatic migrations from `prisma/migrations`
 - **KV Namespace**: `sps-kv` for caching and temporary storage
 - **Queue**: `sps-user-event` for async user event processing
 - **Workflow**: `event-management` for event scheduling automation
 
 ### Workers
+
 1. **Main Worker** (Astro SSR):
    - Handles all web traffic and API endpoints
    - Bindings: DB, KV, all env vars, USER_EVENT_QUEUE
@@ -133,10 +137,11 @@ The app deploys to Cloudflare using Alchemy deployment system configured in `alc
 
 3. **Event Worker**:
    - Manages event scheduling via workflows
-   - Runs on cron: "0 14 * * 1" (Mondays at 9 AM EST/10 AM EDT)
+   - Runs on cron: "0 14 \* \* 1" (Mondays at 9 AM EST/10 AM EDT)
    - Creates weekly events and manages their lifecycle
 
 ### Edge Compatibility
+
 - React DOM configured to use `react-dom/server.edge` in production
 - All workers use `nodejs_compat_v2` compatibility flag
 
@@ -171,7 +176,9 @@ The app deploys to Cloudflare using Alchemy deployment system configured in `alc
 ## Feature-Specific Implementation Details
 
 ### Event Management Workflow
+
 The `EventManagementWorkflow` in `src/services/event-management-workflow.ts` handles:
+
 1. **Monday**: Creates new event for upcoming Saturday
 2. **Wednesday**: Sends invitations via Resend broadcast
 3. **Saturday 7AM**: Sends "event today" reminders
@@ -179,6 +186,7 @@ The `EventManagementWorkflow` in `src/services/event-management-workflow.ts` han
 5. **Saturday 12PM**: Completes event, locks door, resets RSVPs
 
 ### Door Buzzer Integration
+
 - Endpoint: `/api/buzz`
 - Page: `/buzz`
 - Only works during active events (status = 'inprogress')
@@ -186,12 +194,14 @@ The `EventManagementWorkflow` in `src/services/event-management-workflow.ts` han
 - 30-second unlock duration with visual countdown
 
 ### User Event Queue
+
 - Queue name: `sps-user-event`
 - Handles async processing of user updates
 - Syncs users with Resend audience for email broadcasts
 - Processes subscription status changes
 
 ### Admin Dashboard Features
+
 - Event scheduling, rescheduling, and cancellation
 - Break scheduling for holiday periods
 - User management with role updates

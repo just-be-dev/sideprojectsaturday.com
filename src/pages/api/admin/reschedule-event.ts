@@ -14,12 +14,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (!parseResult.success) {
 			return new Response(
 				JSON.stringify({
-					error: "Invalid request",
 					details: parseResult.error.flatten(),
+					error: "Invalid request",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -35,23 +35,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 		if (!event) {
 			return new Response(JSON.stringify({ error: "Event not found" }), {
-				status: 404,
 				headers: { "Content-Type": "application/json" },
+				status: 404,
 			});
 		}
 
 		if (event.status !== "canceled") {
 			return new Response(JSON.stringify({ error: "Event is not canceled" }), {
-				status: 400,
 				headers: { "Content-Type": "application/json" },
+				status: 400,
 			});
 		}
 
 		// Check if date falls within a break period
 		const breaks = await db.break.findMany({
 			where: {
-				startDate: { lte: event.eventDate },
 				endDate: { gte: event.eventDate },
+				startDate: { lte: event.eventDate },
 			},
 		});
 
@@ -61,23 +61,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
 					error: "Cannot reschedule event during a break period",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
 
 		// Update event status back to scheduled
 		const updatedEvent = await db.event.update({
-			where: { id: eventId },
 			data: { status: "scheduled" },
+			where: { id: eventId },
 		});
 
 		return new Response(
-			JSON.stringify({ success: true, event: updatedEvent }),
+			JSON.stringify({ event: updatedEvent, success: true }),
 			{
-				status: 200,
 				headers: { "Content-Type": "application/json" },
+				status: 200,
 			},
 		);
 	} catch (error) {
@@ -85,8 +85,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		return new Response(
 			JSON.stringify({ error: "Failed to reschedule event" }),
 			{
-				status: 500,
 				headers: { "Content-Type": "application/json" },
+				status: 500,
 			},
 		);
 	}

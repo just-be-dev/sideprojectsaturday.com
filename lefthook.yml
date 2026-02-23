@@ -5,11 +5,14 @@ pre-commit:
         - "**/*.astro"
       run: prettier --write {staged_files}
 
-    - name: format code
+    - name: format ts/tsx files
       glob:
-        - "**/*.astro"
         - "**/*.ts"
         - "**/*.tsx"
-        - "**/*.md"
-        - "**/*.json"
-      run: biome check --write --unsafe {staged_files}
+      run: oxfmt {staged_files}
+
+    - name: lint ts/tsx files
+      glob:
+        - "**/*.ts"
+        - "**/*.tsx"
+      run: oxlint --fix {staged_files}

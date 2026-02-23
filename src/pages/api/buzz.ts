@@ -5,7 +5,7 @@ import { isWithinEventHours } from "@/lib/date-utils";
 
 export const POST: APIRoute = async ({ locals }) => {
 	try {
-		const runtime = locals.runtime;
+		const {runtime} = locals;
 
 		// Initialize database
 		db(runtime.env);
@@ -14,13 +14,13 @@ export const POST: APIRoute = async ({ locals }) => {
 		if (!isWithinEventHours()) {
 			return new Response(
 				JSON.stringify({
-					success: false,
 					message:
 						"The door can only be opened on Saturdays from 9 AM to 12 PM EST.",
+					success: false,
 				}),
 				{
-					status: 403,
 					headers: { "Content-Type": "application/json" },
+					status: 403,
 				},
 			);
 		}
@@ -29,35 +29,35 @@ export const POST: APIRoute = async ({ locals }) => {
 		const result = await switchbotRequest(
 			`v1.1/devices/${process.env.SWITCHBOT_DEVICE_ID}/commands`,
 			{
-				method: "POST",
 				body: JSON.stringify({
 					command: "press",
-					parameter: "default",
 					commandType: "command",
+					parameter: "default",
 				}),
+				method: "POST",
 			},
 		);
 
 		if (result.statusCode === 100) {
 			return new Response(
 				JSON.stringify({
-					success: true,
 					message: "Door opened successfully! Come on up to the 5th floor.",
+					success: true,
 				}),
 				{
-					status: 200,
 					headers: { "Content-Type": "application/json" },
+					status: 200,
 				},
 			);
 		} else {
 			return new Response(
 				JSON.stringify({
-					success: false,
 					message: "Failed to open door. Please try again or contact support.",
+					success: false,
 				}),
 				{
-					status: 500,
 					headers: { "Content-Type": "application/json" },
+					status: 500,
 				},
 			);
 		}
@@ -65,12 +65,12 @@ export const POST: APIRoute = async ({ locals }) => {
 		console.error("Buzz error:", error);
 		return new Response(
 			JSON.stringify({
-				success: false,
 				message: "An error occurred while trying to open the door.",
+				success: false,
 			}),
 			{
-				status: 500,
 				headers: { "Content-Type": "application/json" },
+				status: 500,
 			},
 		);
 	}
@@ -94,10 +94,10 @@ async function switchbotRequest(path: string, args: RequestInit) {
 	const response = await fetch(`https://api.switch-bot.com/${path}`, {
 		headers: {
 			Authorization: token,
-			t: t.toString(),
+			"Content-Type": "application/json",
 			nonce: nonce.toString(),
 			sign: sign,
-			"Content-Type": "application/json",
+			t: t.toString(),
 		},
 		...args,
 	});

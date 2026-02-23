@@ -3,8 +3,8 @@ import { z } from "zod/v4";
 import { createAuth } from "@/lib/auth";
 
 const MagicLinkRequestSchema = z.object({
-	email: z.email("Invalid email address"),
 	callbackURL: z.enum(["/buzz", "/rsvp", "/rsvp/cancel"]).optional(),
+	email: z.email("Invalid email address"),
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -25,8 +25,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		// Send magic link using better-auth
 		await auth.api.signInMagicLink({
 			body: {
-				email,
 				callbackURL: callbackURL || "/",
+				email,
 			},
 			headers: request.headers,
 		});

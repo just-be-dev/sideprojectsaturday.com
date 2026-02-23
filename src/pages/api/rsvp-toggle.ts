@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		const rsvped = formData.get("rsvped") === "true";
 
 		// Get the database instance with proper env
-		const runtime = locals.runtime;
+		const {runtime} = locals;
 		if (!runtime?.env) {
 			return new Response("Database environment not available", {
 				status: 500,
@@ -32,8 +32,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 		// Update user RSVP status in database
 		await db.user.update({
-			where: { id: session.user.id },
 			data: { rsvped },
+			where: { id: session.user.id },
 		});
 
 		// Send RSVP confirmation email when user RSVPs (not when canceling)
@@ -42,6 +42,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				// Get the appropriate event based on current time
 				const eventCutoff = getRsvpEventCutoff();
 				const nextEvent = await db.event.findFirst({
+					orderBy: {
+						eventDate: "asc",
+					},
 					where: {
 						eventDate: {
 							gte: eventCutoff,
@@ -50,20 +53,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 							in: ["scheduled", "inprogress"],
 						},
 					},
-					orderBy: {
-						eventDate: "asc",
-					},
 				});
 
 				if (nextEvent) {
 					await sendRsvpConfirmation({
-						userEmail: session.user.email,
-						userName: session.user.name || undefined,
-						userId: session.user.id,
-						eventDate: new Date(nextEvent.eventDate),
 						baseUrl:
 							runtime.env.BETTER_AUTH_BASE_URL ||
 							"https://sideprojectsaturday.com",
+						eventDate: new Date(nextEvent.eventDate),
+						userEmail: session.user.email,
+						userId: session.user.id,
+						userName: session.user.name || undefined,
 					});
 				}
 			} catch (emailError) {

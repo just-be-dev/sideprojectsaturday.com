@@ -14,12 +14,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (!parseResult.success) {
 			return new Response(
 				JSON.stringify({
-					error: "Invalid request",
 					details: parseResult.error.flatten(),
+					error: "Invalid request",
 				}),
 				{
-					status: 400,
 					headers: { "Content-Type": "application/json" },
+					status: 400,
 				},
 			);
 		}
@@ -30,19 +30,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 		// Update event status to canceled
 		const event = await db.event.update({
-			where: { id: eventId },
 			data: { status: "canceled" },
+			where: { id: eventId },
 		});
 
-		return new Response(JSON.stringify({ success: true, event }), {
-			status: 200,
+		return new Response(JSON.stringify({ event, success: true }), {
 			headers: { "Content-Type": "application/json" },
+			status: 200,
 		});
 	} catch (error) {
 		console.error("Error canceling event:", error);
 		return new Response(JSON.stringify({ error: "Failed to cancel event" }), {
-			status: 500,
 			headers: { "Content-Type": "application/json" },
+			status: 500,
 		});
 	}
 };

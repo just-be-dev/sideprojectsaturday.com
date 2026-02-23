@@ -22,6 +22,7 @@ Based on the above changes, create a single git commit following these steps:
 6. Run git status to confirm the commit succeeded
 
 IMPORTANT:
+
 - DO NOT add `Generated with Claude Code` to the end of the commit message
 - ONLY consider currently staged changes
 - DO NOT push the commit to remote
