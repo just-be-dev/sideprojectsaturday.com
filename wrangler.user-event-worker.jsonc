@@ -7,14 +7,14 @@
 		{
 			"binding": "DB",
 			"database_id": "63c43e9b-4981-4224-8a94-df53c4e78dfe",
-			"database_name": "sps-db"
-		}
+			"database_name": "sps-db",
+		},
 	],
 	"kv_namespaces": [
 		{
 			"binding": "KV",
-			"id": "dac13025655e44cea9d83b3bc80895b2"
-		}
+			"id": "dac13025655e44cea9d83b3bc80895b2",
+		},
 	],
 	"queues": {
 		"consumers": [
@@ -22,8 +22,8 @@
 				"queue": "sps-user-event",
 				"max_batch_size": 1,
 				"max_concurrency": 1,
-				"retry_delay": 15
-			}
-		]
-	}
+				"retry_delay": 15,
+			},
+		],
+	},
 }

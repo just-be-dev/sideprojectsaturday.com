@@ -51,11 +51,11 @@ run = "astro"
 [tasks.deploy]
 description = "Deploy all workers to Cloudflare"
 run = [
-  "wrangler d1 migrations apply DB --remote",
-  "mise build",
-  "wrangler deploy",
-  "wrangler deploy --config wrangler.event-worker.jsonc",
-  "wrangler deploy --config wrangler.user-event-worker.jsonc",
+	"wrangler d1 migrations apply DB --remote",
+	"mise build",
+	"wrangler deploy",
+	"wrangler deploy --config wrangler.event-worker.jsonc",
+	"wrangler deploy --config wrangler.user-event-worker.jsonc",
 ]
 
 [tasks.fmt]
