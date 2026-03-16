@@ -207,7 +207,7 @@ const buzzerResult = Astro.getActionResult(actions.openDoor);
 
 		{
 			showBuzzer && (
-				<div class="bg-green-50 border border-green-200 rounded-md p-3">
+				<div class="bg-green-50 border border-green-200 rounded-md p-3" id="buzzer-section">
 					<div class="text-sm font-medium text-green-800 mb-2">
 						Building Access
 					</div>
@@ -220,15 +220,36 @@ const buzzerResult = Astro.getActionResult(actions.openDoor);
 							❌ {buzzerResult.error.message}
 						</div>
 					) : null}
-					<form method="POST" action={actions.openDoor}>
+					
+					<!-- Loading State -->
+					<div id="buzzer-loading" class="hidden">
+						<div class="flex items-center justify-center mb-2">
+							<div class="buzzer-loader"></div>
+						</div>
+						<div class="text-green-700 text-sm text-center mb-2">
+							Opening door...
+						</div>
+					</div>
+					
+					<!-- Success State with Countdown -->
+					<div id="buzzer-success" class="hidden">
+						<div class="text-green-700 text-sm mb-2">
+							✅ Door opened! Come on up to the 5th floor.
+						</div>
+						<div id="buzzer-countdown" class="text-xs text-green-600 mb-2"></div>
+					</div>
+					
+					<!-- Button Form -->
+					<form method="POST" action={actions.openDoor} id="buzzer-form">
 						<button
 							type="submit"
-							class="w-full bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-all"
+							id="buzzer-button"
+							class="w-full bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							🚪 Open Building Door
 						</button>
 					</form>
-					<div class="text-xs text-green-600 mt-2">
+					<div class="text-xs text-green-600 mt-2" id="buzzer-help">
 						Press to unlock the building entrance
 					</div>
 				</div>
@@ -245,3 +266,103 @@ const buzzerResult = Astro.getActionResult(actions.openDoor);
 		</form>
 	</div>
 </div>
+
+<style>
+	.buzzer-loader {
+		width: 24px;
+		height: 24px;
+		border: 3px solid #f3f3f3;
+		border-top: 3px solid #10b981;
+		border-radius: 50%;
+		animation: buzzer-spin 1s linear infinite;
+	}
+
+	@keyframes buzzer-spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+</style>
+
+<script>
+	// Only run if buzzer section exists
+	const buzzerSection = document.getElementById("buzzer-section");
+	if (buzzerSection) {
+		const buzzerForm = document.getElementById("buzzer-form");
+		const buzzerButton = document.getElementById("buzzer-button");
+		const buzzerLoading = document.getElementById("buzzer-loading");
+		const buzzerSuccess = document.getElementById("buzzer-success");
+		const buzzerCountdown = document.getElementById("buzzer-countdown");
+		const buzzerHelp = document.getElementById("buzzer-help");
+
+		if (buzzerForm && buzzerButton) {
+			buzzerForm.addEventListener("submit", async (e) => {
+				// Show loading state immediately
+				buzzerButton.disabled = true;
+				buzzerLoading?.classList.remove("hidden");
+				buzzerHelp?.classList.add("hidden");
+
+				// Let the form submit normally and wait for page response
+				// The server will handle the actual door opening
+				
+				// Note: We can't easily intercept the server action result here,
+				// so we'll rely on the server-side buzzerResult to show success/error states
+				// But we'll add a timeout to hide loading state if something goes wrong
+				setTimeout(() => {
+					if (buzzerLoading && !buzzerLoading.classList.contains("hidden")) {
+						buzzerLoading.classList.add("hidden");
+						buzzerButton.disabled = false;
+						buzzerHelp?.classList.remove("hidden");
+					}
+				}, 5000); // 5 second timeout
+			});
+		}
+
+		// If there's a successful buzzer result, show countdown
+		const hasSuccess = buzzerSection.querySelector('[class*="✅"]')?.textContent?.includes("successfully");
+		if (hasSuccess && buzzerSuccess && buzzerCountdown && buzzerButton) {
+			startBuzzerCountdown();
+		}
+
+		function startBuzzerCountdown() {
+			let seconds = 10;
+			
+			// Hide loading, show success
+			buzzerLoading?.classList.add("hidden");
+			buzzerSuccess?.classList.remove("hidden");
+			buzzerHelp?.classList.add("hidden");
+			
+			// Disable button during countdown
+			if (buzzerButton) {
+				buzzerButton.disabled = true;
+			}
+
+			const updateCountdown = () => {
+				if (seconds > 0 && buzzerCountdown) {
+					buzzerCountdown.textContent = `Button available in ${seconds} seconds...`;
+					seconds--;
+					setTimeout(updateCountdown, 1000);
+				} else {
+					// Re-enable button and hide countdown
+					if (buzzerCountdown) {
+						buzzerCountdown.textContent = "";
+					}
+					if (buzzerButton) {
+						buzzerButton.disabled = false;
+					}
+					if (buzzerSuccess) {
+						buzzerSuccess.classList.add("hidden");
+					}
+					if (buzzerHelp) {
+						buzzerHelp.classList.remove("hidden");
+					}
+				}
+			};
+
+			updateCountdown();
+		}
+	}
+</script>
