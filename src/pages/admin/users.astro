@@ -95,6 +95,7 @@ const verifiedUsers = users.filter((u) => u.emailVerified).length;
 								<th>Subscribed</th>
 								<th>Email Verified</th>
 								<th>Created</th>
+								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -167,6 +168,22 @@ const verifiedUsers = users.filter((u) => u.emailVerified).length;
 										</td>
 										<td class="text-sm text-gray-500">
 											{new Date(user.createdAt).toLocaleDateString()}
+										</td>
+										<td>
+											<button
+												class="btn btn-error btn-xs"
+												hx-post="/api/admin/delete-user"
+												hx-ext="json-enc"
+												hx-confirm={`Are you sure you want to delete ${user.email}? This action cannot be undone.`}
+												hx-target="closest tr"
+												hx-swap="delete"
+												data-user-id={user.id}
+												hx-vals="js:{userId: event.target.dataset.userId}"
+												hx-on:response-error="alert(event.detail.xhr.responseJSON?.error || 'Failed to delete user')"
+												disabled={user.id === Astro.locals.user?.id}
+											>
+												Delete
+											</button>
 										</td>
 									</tr>
 								))
